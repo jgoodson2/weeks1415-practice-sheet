@@ -18,3 +18,4 @@ closing must be the same as the one LAST opened.  Amend your program with the fo
 identified write on the console the line and column that the error was found, and specify the expected type of closing
 bracket.
 ```
+To run #2, run main from `src/FindBracketErrors.java`.
