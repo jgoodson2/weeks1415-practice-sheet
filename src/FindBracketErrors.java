@@ -10,8 +10,29 @@ public class FindBracketErrors {
         String fileName = "code.txt";
         String filePath = new File("").getAbsolutePath() + "/" + fileName;
         String fileContents = getFileContents(filePath);
-
         System.out.println("fileContents = " + fileContents);
+
+        char[] openers = {'(', '{', '['};
+        char[] closers = {')', '}', ']'};
+        int[] openerCount = new int[3];
+        int[] closerCount = new int[3];
+
+        for (int i = 0; i < openers.length; ++i) {
+            for (char ch : fileContents.toCharArray()) {
+                if (ch == openers[i]) {
+                    openerCount[i]++;
+                }
+            }
+            System.out.println("Number of \'" + openers[i] + "\' = " + openerCount[i]);
+
+            for (char ch : fileContents.toCharArray()) {
+                if (ch == closers[i]) {
+                    closerCount[i]++;
+                }
+            }
+            System.out.println("Number of \'" + closers[i] + "\' = " + closerCount[i]);
+        }
+
     }
 
     private static String getFileContents(String filePath) {
@@ -28,7 +49,6 @@ public class FindBracketErrors {
                 contents.append(inputFile.nextLine());
             }
         } catch (FileNotFoundException fnf) {
-            //display total of 0
             System.out.println(fnf.getMessage());
         }
 
