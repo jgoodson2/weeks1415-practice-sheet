@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Stack;
 
 public class BinaryRep {
 
@@ -11,14 +12,19 @@ public class BinaryRep {
     }
 
     private static String getBinaryString(int num) {
+        Stack st = new Stack();
         String binRep = "";
         char newChar;
 
         do {
             newChar = (num % 2 > 0) ? '1' : '0';
-            binRep = newChar + binRep;
+            st.push(newChar);
             num /= 2;
         } while (num > 0);
+
+        while (!st.empty()) {
+            binRep += st.pop();
+        }
 
         return binRep;
     }
