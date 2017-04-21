@@ -6,24 +6,32 @@ public class FindBracketErrors {
 
     public static void main(String[] args) {
 
-        StringBuilder fileContents = new StringBuilder();
+
         String fileName = "code.txt";
         String filePath = new File("").getAbsolutePath() + "/" + fileName;
-        File myFile = new File(filePath);
+        String fileContents = getFileContents(filePath);
+
+        System.out.println("fileContents = " + fileContents);
+    }
+
+    private static String getFileContents(String filePath) {
+
+        StringBuilder contents = new StringBuilder();
         Scanner inputFile;
+        File myFile = new File(filePath);
 
         System.out.println("filePath = " + filePath);
 
         try {
             inputFile = new Scanner(myFile);
-
             while (inputFile.hasNext()) {
-                fileContents.append(inputFile.nextLine());
+                contents.append(inputFile.nextLine());
             }
         } catch (FileNotFoundException fnf) {
             //display total of 0
             System.out.println(fnf.getMessage());
         }
-        System.out.println("fileContents = " + fileContents);
+
+        return contents.toString();
     }
 }
