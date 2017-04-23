@@ -5,8 +5,6 @@ public class BinaryRep {
 
     public static void main(String[] args) {
         int num;
-//        String binString = "";
-
         num = getPositiveInt();
         System.out.println("Binary representation = " + getBinaryString(num));
     }
