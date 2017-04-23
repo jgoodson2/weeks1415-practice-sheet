@@ -23,22 +23,22 @@ public class FindBracketErrors {
 
     private static void evalForBracketErrors(File file) {
         Stack<Character> bracketStack = new Stack<>();
-        Scanner inputFile2;
-        int lineCount2 = 0;
-        int colCount2;
-        String line2;
+        Scanner inputFile;
+        int lineCount = 0;
+        int colCount;
+        String line;
         String bracketType;
         int bracketTypeIndex;
         char expectedOpener;
         char expectedCloser;
         try {
-            inputFile2 = new Scanner(file);
-            while (inputFile2.hasNextLine()) {
-                lineCount2++;
-                line2 = inputFile2.nextLine();
-                colCount2 = 0;
-                for (char ch : line2.toCharArray()) {
-                    colCount2++;
+            inputFile = new Scanner(file);
+            while (inputFile.hasNextLine()) {
+                lineCount++;
+                line = inputFile.nextLine();
+                colCount = 0;
+                for (char ch : line.toCharArray()) {
+                    colCount++;
 
                     if (!getBracketCharType(ch).equals("")) {
                         bracketType = getBracketCharType(ch).toLowerCase().substring(0, openerIndicator.length());
@@ -51,13 +51,22 @@ public class FindBracketErrors {
                                 bracketStack.pop();
                             } else {
                                 expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek()).substring(openerIndicator.length()))];
-                                System.err.printf("Error: '%s' expected at line %d, column %d\n", expectedCloser, lineCount2, colCount2);
+                                System.err.printf("Error: '%s' expected at line %d, column %d\n", expectedCloser, lineCount, colCount);
                                 return;
                             }
                         }
                     }
                 }
-                System.out.println("No errors.");
+
+                //check for unclosed brackets after reaching eof
+                if (!bracketStack.isEmpty()) {
+                    expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek()).substring(openerIndicator.length()))];
+                    System.err.printf("Unclosed bracket: '%s' expected at line %d, column %d\n", expectedCloser, lineCount, colCount + 1);
+                    return;
+                }
+
+                System.out.println("No errors");
+
             }
         } catch (FileNotFoundException fnf) {
             System.out.println(fnf.getMessage());
