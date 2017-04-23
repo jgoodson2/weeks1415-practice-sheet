@@ -5,15 +5,15 @@ public class BinaryRep {
 
     public static void main(String[] args) {
         int num;
-        String binString = "";
+//        String binString = "";
 
-        num = getPositiveInt("Please enter a positive integer: ");
+        num = getPositiveInt();
         System.out.println("Binary representation = " + getBinaryString(num));
     }
 
     private static String getBinaryString(int num) {
         Stack st = new Stack();
-        String binRep = "";
+        StringBuilder binRep = new StringBuilder();
         char newChar;
 
         do {
@@ -23,18 +23,18 @@ public class BinaryRep {
         } while (num > 0);
 
         while (!st.empty()) {
-            binRep += st.pop();
+            binRep.append(st.pop());
         }
 
-        return binRep;
+        return binRep.toString();
     }
 
-    private static int getPositiveInt(String prompt) {
+    private static int getPositiveInt() {
         Scanner scan = new Scanner(System.in);
         int input = 0;
         boolean isValid = false;
         do {
-            System.out.println(prompt);
+            System.out.println("Please enter a positive integer: ");
             if (!scan.hasNextInt()) {
                 System.out.println("Error: not an integer.");
                 scan.nextLine();//clear the scanner
