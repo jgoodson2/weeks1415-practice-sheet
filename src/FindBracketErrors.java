@@ -19,12 +19,13 @@ public class FindBracketErrors {
         String filePath = new File("").getAbsolutePath() + "/" + fileName;
         String fileContents = getFileContents(filePath);
         System.out.printf("Count of opening brackets is equal to count of closing brackets? %s\n", (allBracketCountsMatch(fileContents) ? "YES" : "NO"));
+        System.out.println();
         File myFile = new File(filePath);
         evalForBracketErrors(myFile);
     }
 
     private static void evalForBracketErrors(File file) {
-        Stack<Character> bracketStack = new Stack<>();
+        Stack<Bracket> bracketStack = new Stack<>();
         Scanner inputFile;
         int lineCount = 0;
         int colCount;
@@ -46,35 +47,33 @@ public class FindBracketErrors {
                         bracketType = getBracketCharType(ch).toLowerCase().substring(0, openerIndicator.length());
                         bracketTypeIndex = Integer.parseInt(getBracketCharType(ch).substring(openerIndicator.length()));
                         if (bracketType.equals(openerIndicator)) {
-                            bracketStack.push(ch);
+                            bracketStack.push(new Bracket(ch, lineCount, colCount));
                         } else if (bracketType.equals(closerIndicator)) {
                             expectedOpener = openers[bracketTypeIndex];
                             try {
-                                if (expectedOpener == bracketStack.peek()) {
+                                if (expectedOpener == bracketStack.peek().getBracketChar()) {
                                     bracketStack.pop();
                                 } else {
-                                    expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek()).substring(openerIndicator.length()))];
-                                    System.err.printf("Error: '%s' expected at line %d, column %d\n", expectedCloser, lineCount, colCount);
+                                    expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek().getBracketChar()).substring(openerIndicator.length()))];
+                                    System.err.printf("Bracket Mismatch Error: '%s' found at lineNo %d, column %d but '%s' expected\n", ch, lineCount, colCount, expectedCloser);
                                     return;
                                 }
                             } catch (EmptyStackException ese) {
-                                System.err.printf("Unopened bracket error: closing bracket '%s' found at line %d, column %d, but bracket set not opened previously\n", ch, lineCount, colCount);
+                                System.err.printf("Unopened bracket error: closing bracket '%s' found at lineNo %d, column %d, but bracket set not opened previously\n", ch, lineCount, colCount);
                                 return;
                             }
                         }
                     }
                 }
-
-                //check for unclosed brackets after reaching eof
-                if (!bracketStack.isEmpty()) {
-                    expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek()).substring(openerIndicator.length()))];
-                    System.err.printf("Unclosed bracket error: '%s' expected at line %d, column %d\n", expectedCloser, lineCount, colCount + 1);
-                    return;
-                }
-
-                System.out.println("No errors");
-
             }
+
+            //check for unclosed brackets after reaching eof
+            if (!bracketStack.isEmpty()) {
+                System.err.printf("Unclosed bracket error: '%s' found at lineNo %d, column %d but never closed\n", bracketStack.peek().getBracketChar(), bracketStack.peek().getLineNo(), bracketStack.peek().getColNo());
+                return;
+            }
+
+            System.out.println("No errors");
         } catch (FileNotFoundException fnf) {
             System.out.println(fnf.getMessage());
         }
@@ -116,14 +115,12 @@ public class FindBracketErrors {
                     openerCount[i]++;
                 }
             }
-//            System.out.println("Number of \'" + openers[i] + "\' = " + openerCount[i]);
 
             for (char ch : code.toCharArray()) {
                 if (ch == closers[i]) {
                     closerCount[i]++;
                 }
             }
-//            System.out.println("Number of \'" + closers[i] + "\' = " + closerCount[i]);
         }
 
         for (int i = 0; i < openerCount.length; ++i) {
