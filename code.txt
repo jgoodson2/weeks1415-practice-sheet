@@ -1,3 +1,3 @@
-hey(){
-   print("hello world");
+function sayHello(){
+    print ("hello world")
 }
