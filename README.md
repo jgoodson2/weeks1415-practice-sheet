@@ -6,7 +6,7 @@
 1. Write  a  program  that  reads  in  a  positive  integer  and  prints  the  binary  representation  of  that integer.
   Hint:  divide the integer by 2
 ```
-To run #1, run main from `src/BinaryRep.java`.
+To run #1, run `main` method from `src/BinaryRep.java`.
 
 ```
 2. Assume  that  you  are  not  as  careful  programmer  as you  are  and you  frequently  forget  to  close your
@@ -18,4 +18,4 @@ closing must be the same as the one LAST opened.  Amend your program with the fo
 identified write on the console the line and column that the error was found, and specify the expected type of closing
 bracket.
 ```
-To run #2, run main from `src/FindBracketErrors.java`.
+To run #2, run `main` method from `src/FindBracketErrors.java`.
