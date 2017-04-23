@@ -1,43 +1,101 @@
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.io.File;
+import java.util.Stack;
 
 public class FindBracketErrors {
 
-    public static void main(String[] args) {
+    private static String openerIndicator = "o";
+    private static String closerIndicator = "c";
 
+    //for this to work properly, matching brackets must be in same index in these arrays
+    private static char[] openers = {'(', '{', '[', '<'};
+    private static char[] closers = {')', '}', ']', '>'};
+
+    public static void main(String[] args) {
 
         String fileName = "code.txt";
         String filePath = new File("").getAbsolutePath() + "/" + fileName;
-        String fileContents = getFileContents(filePath);
-        System.out.println("fileContents = " + fileContents);
-        System.out.println("All opening and closing bracket counts match = " + allBracketCountsMatch(fileContents));
-        /////////
+//        String fileContents = getFileContents(filePath);
         File myFile = new File(filePath);
-        Scanner inputFile;
-        int lineCount = 0;
-        String line;
-        int colCount;
+        evalForBracketErrors(myFile);
+    }
+
+    private static void evalForBracketErrors(File file) {
+        Stack<Character> bracketStack = new Stack<>();
+        Scanner inputFile2;
+        int lineCount2 = 0;
+        int colCount2;
+        String line2;
+        String bracketType;
+        int bracketTypeIndex;
+        char expectedOpener;
+        char expectedCloser;
         try {
-            inputFile = new Scanner(myFile);
-            while (inputFile.hasNext()) {
-                //contents.append(inputFile.nextLine());
-                line = inputFile.nextLine();
-                //System.out.println("Line " + ++lineCount + ": " + line);
-                System.out.println("Line " + lineCount++ + ":");
-                colCount = 0;
-                for (char col : line.toCharArray()) {
-                    System.out.println("Col " + colCount++ + ": " + col);
+            inputFile2 = new Scanner(file);
+            while (inputFile2.hasNextLine()) {
+                lineCount2++;
+                line2 = inputFile2.nextLine();
+                colCount2 = 0;
+                for (char ch : line2.toCharArray()) {
+                    colCount2++;
+
+                    if (!getBracketCharType(ch).equals("")) {
+                        bracketType = getBracketCharType(ch).toLowerCase().substring(0, openerIndicator.length());
+                        bracketTypeIndex = Integer.parseInt(getBracketCharType(ch).substring(openerIndicator.length()));
+                        if (bracketType.equals(openerIndicator)) {
+                            bracketStack.push(ch);
+                        } else if (bracketType.equals(closerIndicator)) {
+                            expectedOpener = openers[bracketTypeIndex];
+                            if (expectedOpener == bracketStack.peek()) {
+                                bracketStack.pop();
+                            } else {
+                                expectedCloser = closers[Integer.parseInt(getBracketCharType(bracketStack.peek()).substring(openerIndicator.length()))];
+                                System.err.printf("Error: '%s' expected at line %d, column %d\n", expectedCloser, lineCount2, colCount2);
+                                return;
+                            }
+                        }
+                    }
                 }
+                System.out.println("No errors.");
             }
         } catch (FileNotFoundException fnf) {
             System.out.println(fnf.getMessage());
         }
 
+    }
+
+    private static void printStack(Stack<Character> stack) {
+        StringBuilder stackString = new StringBuilder();
+        for (char ch : stack) {
+            stackString.append(ch);
+        }
+        System.out.println("stackString = " + stackString);
+    }
+
+    private static String getBracketCharType(char ch) {
+        String result = "";
+        int index = 0;
+        for (char o : openers) {
+            if (ch == o) {
+                result = openerIndicator + Integer.toString(index);
+                break;
+            }
+            index++;
+        }
+        index = 0;
+        for (char c : closers) {
+            if (ch == c) {
+                result = closerIndicator + Integer.toString(index);
+                break;
+            }
+            index++;
+        }
+        return result;
 
     }
 
-    private static boolean allBracketCountsMatch(String st) {
+    private static boolean allBracketCountsMatch(String code) {
 
         char[] openers = {'(', '{', '['};
         char[] closers = {')', '}', ']'};
@@ -45,14 +103,14 @@ public class FindBracketErrors {
         int[] closerCount = new int[3];
 
         for (int i = 0; i < openers.length; ++i) {
-            for (char ch : st.toCharArray()) {
+            for (char ch : code.toCharArray()) {
                 if (ch == openers[i]) {
                     openerCount[i]++;
                 }
             }
             System.out.println("Number of \'" + openers[i] + "\' = " + openerCount[i]);
 
-            for (char ch : st.toCharArray()) {
+            for (char ch : code.toCharArray()) {
                 if (ch == closers[i]) {
                     closerCount[i]++;
                 }
@@ -73,8 +131,6 @@ public class FindBracketErrors {
         StringBuilder contents = new StringBuilder();
         Scanner inputFile;
         File myFile = new File(filePath);
-
-        System.out.println("filePath = " + filePath);
 
         try {
             inputFile = new Scanner(myFile);
